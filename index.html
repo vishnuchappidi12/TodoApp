@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" placeholder="Enter uid" name="uid"/>
+    <input type="text" placeholder="Enter Task" name="task"/>
+    <input type="date" name="dl"/>
+    <button onclick="add()">ADD</button>
+    <button onclick="upd()" style="display: none;">UPDATE</button>
+    
+    <h3>Pending Tasks</h3>
+    <table id="pending-tasks">
+    </table>
+
+    <h3>Completed Tasks</h3>
+    <table id="completed-tasks">
+    </table>
+
+    <script>
+        let a = [];
+        let completedTasks = [];
+        let ipr = document.getElementsByTagName("input");
+        let btn = document.getElementsByTagName("button");
+        let pendingTable = document.getElementById("pending-tasks");
+        let completedTable = document.getElementById("completed-tasks");
+        let ind = -1;
+
+        let disp = () => {
+            let S = "";
+            if (a.length > 0) {
+                S = "<tr><th>SNO</th><th>User ID</th><th>Task</th><th>Deadline</th></tr>";
+                for (let i = 0; i < a.length; i++) {
+                    S += `<tr>
+                            <td>${i + 1}</td>
+                            <td>${a[i].uid}</td>
+                            <td>${a[i].task}</td>
+                            <td>${a[i].dl}</td>
+                            <td>
+                                <button onclick="edit(${i})">Edit</button>
+                                <button onclick="del(${i})">Delete</button>
+                                <button onclick="com(${i})">Complete</button>
+                            </td>
+                          </tr>`;
+                }
+            }
+            pendingTable.innerHTML = S;
+        };
+
+        let dispCompleted = () => {
+            let S = "";
+            if (completedTasks.length > 0) {
+                S = "<tr><th>SNO</th><th>User ID</th><th>Task</th><th>Deadline</th></tr>";
+                for (let i = 0; i < completedTasks.length; i++) {
+                    S += `<tr>
+                            <td>${i + 1}</td>
+                            <td>${completedTasks[i].uid}</td>
+                            <td>${completedTasks[i].task}</td>
+                            <td>${completedTasks[i].dl}</td>
+                          </tr>`;
+                }
+            }
+            completedTable.innerHTML = S;
+        };
+
+        let add = () => {
+            let obj = {};
+            for (let i = 0; i < ipr.length; i++) {
+                obj = { ...obj, [ipr[i].name]: ipr[i].value };
+                ipr[i].value = "";
+            }
+            a.push(obj);
+            disp();
+        };
+
+        function del(ind) {
+            a.splice(ind, 1);
+            disp();
+        }
+
+        function edit(i) {
+            ipr[0].value = a[i].uid;
+            ipr[1].value = a[i].task;
+            ipr[2].value = a[i].dl;
+            btn[0].style.display = "none";
+            btn[1].style.display = "inline-block";
+            ind = i;
+        }
+
+        function upd() {
+            let obj = {};
+            for (let i = 0; i < ipr.length; i++) {
+                obj = { ...obj, [ipr[i].name]: ipr[i].value };
+                ipr[i].value = "";
+            }
+            a[ind] = obj;
+            disp();
+            btn[0].style.display = "inline-block";
+            btn[1].style.display = "none";
+        }
+
+        function com(index) {
+            // Move the task to the completedTasks array
+            completedTasks.push(a[index]);
+            // Remove the task from the pending list
+            a.splice(index, 1);
+            // Update both tables
+            disp();
+            dispCompleted();
+        }
+    </script>
+</body>
+</html>
